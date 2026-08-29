@@ -75,7 +75,12 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
  font-size:.88rem;cursor:pointer}
 .chip:hover{border-color:var(--gold)}
 .chip.off{opacity:.45}
+.chip.eq{border-color:#5E9E5A;background:#122A1C;color:#A8DCA4}
+.chip.bag{border-color:#4A4033;background:#1A1712;color:#8E836F;opacity:.8}
+.chip.id{border-color:#C89218;background:#2A2210;color:#E8C868}
 .chip.trap{border-color:#C4553F;background:#3A1A14;color:#E08B76}
+.lbl{font-size:.72rem;color:#6E8A7C;align-self:center;margin-left:.15rem}
+.sgear{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:.25rem;align-items:center}
 
 /* --- אזור קרב --- */
 #center{position:absolute;top:50%;right:50%;transform:translate(50%,-50%);width:min(560px,72%);text-align:center}
@@ -89,7 +94,7 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
 
 /* --- קלף --- */
 .card{position:relative;width:var(--w,130px);height:calc(var(--w,130px)*1.3968);
- font-size:calc(var(--w,130px)/17);background:var(--parch);color:var(--ink);
+ font-size:calc(var(--w,130px)/13);background:var(--parch);color:var(--ink);
  border:.3em solid var(--ink);border-radius:.55em;display:flex;flex-direction:column;
  overflow:hidden;text-align:right;flex-shrink:0;cursor:pointer;transition:transform .15s}
 .card:hover{transform:translateY(-7px)}
@@ -102,24 +107,34 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
 #trash.drop{border-color:#C4553F;color:#E08B76;background:#3A1A1440}
 .card.door{--d:var(--door);--di2:var(--cream)}
 .card.treasure{--d:var(--treas);--di2:var(--ink)}
-.ct{font-family:'Suez One',serif;font-size:1em;line-height:1.12;text-align:center;padding:.4em .3em;
+.ct{font-family:'Suez One',serif;font-size:1.05em;line-height:1.14;text-align:center;padding:.42em .3em;
  background:var(--d);color:var(--di2);border-bottom:.3em solid var(--ink);min-height:2.3em;
  display:flex;align-items:center;justify-content:center}
-.ca{position:relative;flex:0 0 32%;margin:.35em .4em .25em;border:.18em solid var(--ink);
+.ca{position:relative;flex:0 0 26%;margin:.35em .4em .25em;border:.18em solid var(--ink);
  border-radius:.25em;background:var(--parch2);display:grid;place-items:center;font-size:2.4em}
 .cl{position:absolute;bottom:-.1em;inset-inline-start:-.1em;background:var(--ink);color:var(--parch);
- border-radius:.3em;padding:.05em .45em .15em;font-family:'Secular One',sans-serif;font-size:1.25em}
-.cb{flex:1;padding:.1em .5em;overflow:hidden;font-size:.78em;line-height:1.25;font-weight:600}
+ border-radius:.3em;padding:.05em .45em .15em;font-family:'Secular One',sans-serif;font-size:1.35em}
+.cb{flex:1;padding:.15em .5em;overflow:hidden;font-size:.92em;line-height:1.3;font-weight:600}
 .cbad{color:#7A1E10}
 .cf{margin-top:auto;display:flex;justify-content:space-between;background:var(--d);color:var(--di2);
- border-top:.28em solid var(--ink);padding:.2em .5em .25em;font-family:'Secular One',sans-serif;font-size:.66em}
+ border-top:.28em solid var(--ink);padding:.22em .5em .28em;font-family:'Secular One',sans-serif;font-size:.8em}
 .row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
 .hint{color:#7A9488;font-size:1.15rem;padding:1.2rem;line-height:1.6}
 
 /* --- תחתית --- */
 #bottom{background:#12211A;border-top:2px solid var(--rail);padding:.7rem 1rem;
  display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
-#myhand{display:flex;gap:.6rem;overflow-x:auto;flex:1;padding-bottom:.3rem;min-height:120px}
+#myhand{display:flex;gap:.6rem;overflow-x:auto;padding-bottom:.3rem;min-height:150px}
+#mygear{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.9rem}
+.zone{display:flex;align-items:center;gap:.4rem;background:#0E1A14;border:1.5px solid var(--rail);
+ border-radius:9px;padding:.35rem .6rem}
+.zone.body{border-color:#3D6B4F}
+.zone.bag{border-color:#5A4A33}
+.zone h4{font-size:.82rem;color:#7A9488;font-weight:600;margin-left:.2rem}
+.slotchip{background:#16241C;border:1px solid #3A3428;border-radius:6px;padding:.2rem .5rem;
+ font-size:.86rem;cursor:pointer;white-space:nowrap}
+.slotchip:hover{border-color:var(--gold)}
+.slotchip.empty{opacity:.35;cursor:default;border-style:dashed}
 #acts{display:flex;flex-direction:column;gap:.5rem;min-width:230px}
 .act{background:var(--gold);color:#1A1409;border-radius:8px;padding:.75rem 1rem;font-weight:800;font-size:1.1rem}
 .act:hover{background:#F5C534}
@@ -184,8 +199,11 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
   </div>
 
   <div id="bottom">
-    <div id="myhand" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
-         ondrop="drop(event,'hand')"></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:.5rem;min-width:0">
+      <div id="mygear"></div>
+      <div id="myhand" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
+           ondrop="drop(event,'hand')"></div>
+    </div>
     <div id="acts"></div>
   </div>
 </div>
@@ -240,7 +258,7 @@ function card(c,w){
   ondragstart="dragStart(event,'${c.uid}')" ondragend="dragEnd(event)" onclick="open_('${c.uid}')">
   <div class="ct">${c.name}</div>
   <div class="ca">${c.art||""}${c.level!=null?`<div class="cl">${c.level}</div>`:""}</div>
-  <div class="cb">${(c.text||"").slice(0,120)}${c.badStuff?`<div class="cbad"><b>רע:</b> ${c.badStuff.slice(0,70)}</div>`:""}</div>
+  <div class="cb">${(c.text||"").slice(0,180)}${c.badStuff?`<div class="cbad"><b>רע:</b> ${c.badStuff.slice(0,110)}</div>`:""}</div>
   <div class="cf">${f}</div></div>`}
 
 function find(u){if(!ST)return null;
@@ -251,41 +269,57 @@ function find(u){if(!ST)return null;
  return null}
 
 function open_(u){const f=find(u);if(!f)return;const{c,where}=f;
- document.getElementById("mc").innerHTML=card(c,215).replace(/onclick="[^"]*"/,"");
+ document.getElementById("mc").innerHTML=card(c,270).replace(/onclick="[^"]*"/,"");
  let h=`<div style="font-size:1rem;color:#9DB8A8;margin-bottom:.4rem">${TY[c.type]||""}</div>`;
  const mine=ST.turnId==PID, inCombat=!!ST.combat;
  if(where=="hand"){
   const others=ST.players.filter(p=>p.id!=PID);
-  // --- מה שהמשחק מציע, לפי סוג הקלף והשלב ---
-  if(inCombat){
-   h+=`<button class="act g" onclick="go('playInCombat',{uid:'${u}',side:'me'});cl()">שחק לצידי</button>`;
-   h+=`<button class="act r" onclick="go('playInCombat',{uid:'${u}',side:'monster'});cl()">שחק נגד הלוחם</button>`;
-   if(c.type=="monster") h+=`<button class="act r" onclick="go('addToCombat',{uid:'${u}'});cl()">צרף לקרב הזה</button>`;
-  }
-  if(c.type=="monster"&&!inCombat){
-   if(mine&&ST.phase=="AFTER") h+=`<button class="act" onclick="go('lookForTrouble',{uid:'${u}'});cl()">חפש צרות</button>`;
-   h+=`<button class="mini" onclick="go('forceCombat',{uid:'${u}'});cl()">פתח קרב ידנית</button>`;
-  }
-  if(c.type=="item"&&!inCombat){
-   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">צייד — נותן בונוס</button>`;
-   h+=`<button class="mini" onclick="go('equip',{uid:'${u}',carried:true});cl()">שא כנשוא — בלי בונוס</button>`;
-   h+=`<div style="font-size:.85rem;color:#7A9488;line-height:1.4">נשוא לא תופס משבצת ולא נספר בגבול היד, אבל אפשר לגנוב אותו.</div>`;
-  }
-  if(["curse","trap"].includes(c.type)){
-   h+=`<div style="font-size:.9rem;color:#E08B76;margin-top:.2rem">על מי לשחק?</div>`;
-   h+=`<button class="act r" onclick="go('putOn',{uid:'${u}'});cl()">על עצמי</button>`;
-   h+=others.map(p=>`<button class="act r" onclick="go('putOn',{uid:'${u}',toId:'${p.id}'});cl()">על ${p.name}</button>`).join("");
-  }
-  if(["trait","class","base","exemption","origin"].includes(c.type))
-   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">שים לפניי</button>`;
-  if(c.type=="rule"||c.type=="special"||c.type=="oneshot")
-   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">שים על השולחן</button>`;
+  const T=c.type;
+  const isItem=T=="item", isOne=T=="oneshot"||T=="special",
+        isMon=T=="monster", isHex=T=="curse"||T=="trap",
+        isIdent=["trait","class","base","exemption","origin"].includes(T),
+        isEnh=T=="enhancer"||T=="weakener";
 
-  // --- תמיד זמין ---
+  if(inCombat){
+   // בקרב: רק חד־פעמיים, מחזקים ומפלצות
+   if(isOne){
+    h+=`<button class="act g" onclick="go('playInCombat',{uid:'${u}',side:'me'});cl()">שחק לצידי</button>`;
+    h+=`<button class="act r" onclick="go('playInCombat',{uid:'${u}',side:'monster'});cl()">שחק נגד הלוחם</button>`;
+   }
+   if(isEnh) h+=`<button class="act r" onclick="go('playInCombat',{uid:'${u}',side:'monster'});cl()">${T=="enhancer"?"חזק את המפלצת":"החלש את המפלצת"}</button>`;
+   if(isMon) h+=`<button class="act r" onclick="go('addToCombat',{uid:'${u}'});cl()">צרף לקרב הזה</button>`;
+   if(isHex){
+    h+=`<button class="act r" onclick="go('putOn',{uid:'${u}'});cl()">על עצמי</button>`;
+    h+=others.map(p=>`<button class="act r" onclick="go('putOn',{uid:'${u}',toId:'${p.id}'});cl()">על ${p.name}</button>`).join("");
+   }
+   if(isItem) h+=`<div style="font-size:.9rem;color:#E08B76;line-height:1.4">אי אפשר לצייד באמצע קרב. הקלף יחכה ביד.</div>`;
+   if(isIdent) h+=`<div style="font-size:.9rem;color:#E08B76;line-height:1.4">קלף זהות לא נכנס לקרב.</div>`;
+  } else {
+   if(isItem){
+    h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">🛡 צייד — על הדמות</button>`;
+    h+=`<button class="mini" onclick="go('equip',{uid:'${u}',carried:true});cl()">🎒 לתיק — נשוא, בלי בונוס</button>`;
+    h+=`<div style="font-size:.85rem;color:#7A9488;line-height:1.4">מצויד נותן בונוס ותופס משבצת. בתיק לא נותן כלום, אבל יוצא מהיד ולא נספר בגבול.</div>`;
+   }
+   if(isIdent) h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">שים לפניי</button>`;
+   if(isMon){
+    if(mine&&ST.phase=="AFTER") h+=`<button class="act" onclick="go('lookForTrouble',{uid:'${u}'});cl()">חפש צרות</button>`;
+    h+=`<button class="mini" onclick="go('forceCombat',{uid:'${u}'});cl()">פתח קרב ידנית</button>`;
+   }
+   if(isHex){
+    h+=`<div style="font-size:.9rem;color:#E08B76">על מי לשחק?</div>`;
+    h+=`<button class="act r" onclick="go('putOn',{uid:'${u}'});cl()">על עצמי</button>`;
+    h+=others.map(p=>`<button class="act r" onclick="go('putOn',{uid:'${u}',toId:'${p.id}'});cl()">על ${p.name}</button>`).join("");
+   }
+   if(isEnh) h+=`<div style="font-size:.9rem;color:#7A9488;line-height:1.4">מחזק משוחק רק כשיש קרב.</div>`;
+   if(isOne) h+=`<div style="font-size:.9rem;color:#7A9488;line-height:1.4">חד־פעמי משוחק בתוך קרב, או כשקלף אומר.</div>`;
+   if(T=="rule") h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">חשוף לכל השולחן</button>`;
+  }
+
+  // תמיד
   h+=`<div style="height:.4rem"></div>`;
-  h+=`<button class="mini" onclick="go('putOn',{uid:'${u}'});cl()">שים לפניי בכל מקרה</button>`;
-  h+=others.map(p=>`<button class="mini" onclick="go('give',{uid:'${u}',toId:'${p.id}'});cl()">תן ל${p.name}</button>`).join("");
+  if(isItem) h+=others.map(p=>`<button class="mini" onclick="go('give',{uid:'${u}',toId:'${p.id}'});cl()">תן ל${p.name}</button>`).join("");
   h+=`<button class="mini" onclick="go('discard',{uid:'${u}',from:'hand'});cl()">זרוק</button>`;
+  h+=`<div style="font-size:.8rem;color:#5F7A6E;line-height:1.35;margin-top:.2rem">לכל מהלך אחר — גררו את הקלף לאן שתרצו.</div>`;
  }else if(where=="mytable"&&c.type=="trap"){
   h+=`<div style="font-size:.95rem;color:#E08B76;line-height:1.4;margin-bottom:.3rem">
     ⛓ אתה תקוע במלכודת. היא נשארת עד שתשתחרר.</div>`;
@@ -333,40 +367,71 @@ async function load(){
    ${p.id==ST.turnId?'<span class="turnbadge">תורו</span>':''}
    <div class="sname"><span class="sdot"></span>${p.name}</div>
    <div class="sstat">דרגה ${p.level} · כוח ${p.power} · אאורה ${p.aura} · ${p.hand} ביד</div>
-   ${p.table.length?`<div class="sgear">${p.table.map(c=>
-     `<span class="chip ${c.type=='trap'?'trap':(!c.equipped?'off':'')}" title="${c.type=='trap'?'מלכודת פעילה':(c.equipped?'מצויד':'נשוא')}" onclick="open_('${c.uid}')">${c.art||""}${c.type=='trap'?" ⛓":(c.bonus&&c.equipped?"+"+c.bonus:(!c.equipped?" ⌀":""))}</span>`).join("")}</div>`:""}
+   ${(()=>{const eq=p.table.filter(c=>c.equipped&&c.type=="item"),
+     ident=p.table.filter(c=>c.equipped&&c.type!="item"),
+     bag=p.table.filter(c=>!c.equipped&&c.type!="trap"&&c.type!="curse"),
+     hex=p.table.filter(c=>c.type=="trap"||c.type=="curse");
+    const g=(arr,cls,pre)=>arr.length?`<div class="sgear">${pre}${arr.map(c=>
+      `<span class="chip ${cls}" onclick="open_('${c.uid}')">${c.art||""}${c.bonus&&cls=="eq"?" +"+c.bonus:""}</span>`).join("")}</div>`:"";
+    return g(ident,"id","")+g(eq,"eq",`<span class="lbl">🛡 על הדמות</span>`)
+         +g(bag,"bag",`<span class="lbl">🎒 בתיק</span>`)
+         +g(hex,"trap",`<span class="lbl">⛓</span>`)})()}
   </div>`}).join("");
 
  const ar=document.getElementById("arena");
- if(ST.combat){
+ if(ST.combat&&ST.combat.monsters.length){
   const P=ST.combat.power, win=P.mine>=P.mon;
   ar.innerHTML=`
-   <div class="row">${ST.combat.monsters.map(c=>card(c,175)).join("")}</div>
+   <div class="row">${ST.combat.monsters.map(c=>card(c,215)).join("")}</div>
    <div class="vs">
      <div class="side"><div class="sidenum ${win?'win':''}">${P.mine}</div><div class="sidelbl">אתם</div></div>
      <div class="vsx">מול</div>
      <div class="side"><div class="sidenum ${win?'':'lose'}">${P.mon}</div><div class="sidelbl">המפלצת</div></div>
    </div>
    ${ST.combat.mine.length||ST.combat.against.length?`<div class="row" style="margin-top:.5rem">
-     ${ST.combat.mine.map(c=>card(c,120)).join("")}${ST.combat.against.map(c=>card(c,120)).join("")}</div>`:""}`;
+     ${ST.combat.mine.map(c=>card(c,145)).join("")}${ST.combat.against.map(c=>card(c,145)).join("")}</div>`:""}`;
  }else if(ST.pending){
   ar.innerHTML=`<div class="hint" style="color:var(--gold);font-size:1.5rem">
    ניצחת! ${ST.pending.count} אוצרות ממתינים לך</div>`;
  }else if(!ST.started){
   ar.innerHTML=`<div class="hint">חכו שכולם יישבו, ואז לחצו <b>משחק חדש</b> למעלה</div>`;
  }else{
-  ar.innerHTML=`<div class="hint">${mine?"השולחן פנוי — המשיכו בתור שלכם":"ממתינים ל"+ST.turnName}
+  const staged=ST.combat?[...ST.combat.mine,...ST.combat.against]:[];
+  ar.innerHTML=(staged.length?`<div class="row">${staged.map(c=>card(c,145)).join("")}</div>
+    <div class="hint" style="font-size:.95rem">קלפים על השולחן — עדיין אין מפלצת</div>`:"")
+   +`<div class="hint">${mine?"השולחן פנוי — המשיכו בתור שלכם":"ממתינים ל"+ST.turnName}
    <div style="font-size:.9rem;margin-top:.6rem;opacity:.7">אפשר לגרור קלפים: לשולחן, לכיסא של שחקן, או לפח</div></div>`;
  }
 
- document.getElementById("myhand").innerHTML=ST.you.hand.map(c=>card(c,150)).join("")
+ // --- אזורי הדמות והתיק ---
+ const T=ST.you.table;
+ const SLOTS=["כיסוי ראש","שריון","נעליים","יד אחת","יד אחת","שתי ידיים","ללא מיקום"];
+ const eq=T.filter(c=>c.equipped&&c.type=="item");
+ const used=[]; const body=[];
+ for(const sl of ["כיסוי ראש","שריון","נעליים","יד אחת","יד אחת","שתי ידיים"]){
+  const f=eq.find(c=>c.slot==sl&&!used.includes(c.uid));
+  if(f){used.push(f.uid);body.push(`<span class="slotchip" onclick="open_('${f.uid}')">${f.art||""} ${f.name.slice(0,12)} +${f.bonus||0}</span>`);}
+  else body.push(`<span class="slotchip empty">${sl}</span>`);
+ }
+ for(const c of eq) if(!used.includes(c.uid))
+  body.push(`<span class="slotchip" onclick="open_('${c.uid}')">${c.art||""} ${c.name.slice(0,12)} +${c.bonus||0}</span>`);
+ const bag=T.filter(c=>!c.equipped&&c.type!="trap"&&c.type!="curse");
+ const ident=T.filter(c=>c.equipped&&c.type!="item");
+ document.getElementById("mygear").innerHTML=
+  `<div class="zone body"><h4>🛡 על הדמות</h4>${body.join("")}
+    ${ident.map(c=>`<span class="slotchip" onclick="open_('${c.uid}')">${c.art||""} ${c.name.slice(0,14)}</span>`).join("")}</div>`
+  +`<div class="zone bag"><h4>🎒 בתיק</h4>${bag.length?bag.map(c=>
+     `<span class="slotchip" onclick="open_('${c.uid}')">${c.art||""} ${c.name.slice(0,12)}</span>`).join("")
+     :'<span class="slotchip empty">ריק</span>'}</div>`;
+
+ document.getElementById("myhand").innerHTML=ST.you.hand.map(c=>card(c,185)).join("")
   ||'<div class="hint">אין קלפים ביד</div>';
 
  let a=`<div class="ctr">דרגה <button class="tiny" onclick="go('lvl',{d:-1})">−</button>
    <b>${ST.you.level}</b><button class="tiny" onclick="go('lvl',{d:1})">+</button></div>
   <div class="ctr">אאורה <button class="tiny" onclick="go('aura',{d:-1})">−</button>
    <b>${ST.you.aura}</b><button class="tiny" onclick="go('aura',{d:1})">+</button></div>`;
- if(ST.started&&!mine&&ST.combat){
+ if(ST.started&&!mine&&ST.combat&&ST.combat.monsters.length){
   a+=`<div style="font-size:.95rem;color:#9DB8A8">קרב של ${ST.turnName}</div>`;
   a+=`<button class="act g" onclick="go('help',{helperId:'${PID}'})">אני עוזר</button>`;
   a+=`<div style="font-size:.85rem;color:#7A9488;line-height:1.4">אפשר גם ללחוץ על קלף ביד ולשחק אותו לתוך הקרב</div>`;
@@ -378,7 +443,7 @@ async function load(){
    if(gear&&ST.you.power<4) a+=`<div style="background:#7A2E1E;border-radius:7px;padding:.6rem .8rem;font-size:.95rem;line-height:1.5">
      ⚠ הכוח שלך ${ST.you.power} בלבד. יש לך ${gear} פריטי ציוד ביד —<br>שחקו אותם <b>לפני</b> שתפתחו דלת.</div>`;
    a+=`<button class="act" onclick="kick()">פתח דלת</button>`;}
-  else if(ST.phase=="COMBAT"){
+  else if(ST.phase=="COMBAT"&&ST.combat&&ST.combat.monsters.length){
    a+=`<button class="act g" onclick="go('resolve')">הכרע קרב</button>`;
    if(ST.combat?.mustFlee) a+=`<button class="act r" onclick="fleeNow()">ברח 🎲</button>`;
    a+=ST.players.filter(p=>p.id!=PID).map(p=>
