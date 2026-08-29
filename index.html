@@ -6,310 +6,424 @@
 <title>סופר מאנצ'קין־אסטרייכר</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Secular+One&family=Suez+One&display=swap');
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --parchment:#F2E4C2;--parchment-deep:#E2CFA2;--ink:#17120D;
-  --door:#9A2B1C;--treasure:#C89218;--cream:#FBF3DF;
-  --table:#221E18;--table2:#2E2820;--yellow:#E8B317;
+ --felt:#1B4332;--felt2:#14342640;--rail:#4A2C17;--gold:#E8B317;
+ --parch:#F2E4C2;--parch2:#E2CFA2;--ink:#17120D;
+ --door:#9A2B1C;--treas:#C89218;--cream:#FBF3DF;
 }
-body{margin:0;background:var(--table);color:var(--cream);font-family:'Assistant',system-ui,sans-serif;min-height:100vh}
-button{font-family:inherit;cursor:pointer}
-:focus-visible{outline:2.5px solid var(--yellow);outline-offset:2px}
+body{background:#0E1A14;color:var(--cream);font-family:'Assistant',system-ui,sans-serif;font-size:17px;
+ min-height:100vh;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:0}
+:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
 
-/* --- כניסה --- */
-#gate{display:grid;place-items:center;min-height:100vh;padding:2rem}
-.gatebox{background:var(--table2);border:2px solid #4A4033;border-radius:16px;padding:2rem;max-width:380px;width:100%}
-.gatebox h1{font-family:'Suez One',serif;font-size:1.3rem;margin:0 0 .3rem}
-.gatebox p{color:#B6A991;font-size:.85rem;margin:0 0 1.4rem;line-height:1.5}
-input,select{width:100%;background:#0F0C08;border:1.5px solid #4A4033;border-radius:8px;color:var(--cream);
-  padding:.6rem .8rem;font-family:inherit;font-size:.95rem;margin-bottom:.8rem}
-.btn{background:var(--yellow);color:#1A1409;border:0;border-radius:8px;padding:.65rem 1.2rem;font-weight:800;font-size:.9rem;width:100%}
-.btn:hover{background:#F5C534}
-.btn2{background:none;border:1.5px solid #4A4033;color:#D8CDB6;border-radius:8px;padding:.45rem .85rem;font-size:.82rem;font-weight:600}
-.btn2:hover{border-color:var(--yellow);color:var(--yellow)}
-.btn2.warn:hover{border-color:#C4553F;color:#E08B76}
+/* ===== כניסה ===== */
+#gate{display:grid;place-items:center;min-height:100vh;padding:1.5rem}
+.gbox{background:#1A2620;border:2px solid var(--rail);border-radius:18px;padding:2rem;max-width:360px;width:100%;text-align:center}
+.gbox h1{font-family:'Suez One',serif;font-size:1.7rem;margin-bottom:.4rem}
+.gbox p{color:#8FA89A;font-size:1rem;margin-bottom:1.4rem;line-height:1.5}
+input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border-radius:9px;
+ color:var(--cream);padding:.65rem .85rem;font-family:inherit;font-size:1.1rem;margin-bottom:.7rem;text-align:center}
+.big{background:var(--gold);color:#1A1409;border-radius:9px;padding:.85rem;font-weight:800;font-size:1.15rem;width:100%}
+.big:hover{background:#F5C534}
+.big:disabled{opacity:.35;cursor:not-allowed}
 
-/* --- פריסה --- */
-#app{display:none;grid-template-columns:1fr 300px;gap:1rem;padding:1rem;max-width:1500px;margin:0 auto}
-@media(max-width:900px){#app{grid-template-columns:1fr}}
-.panel{background:var(--table2);border:1.5px solid #3B3428;border-radius:12px;padding:.9rem}
-.panel h2{font-family:'Suez One',serif;font-size:.95rem;margin:0 0 .7rem;color:var(--yellow)}
+/* ===== פריסה ===== */
+#app{display:none;height:100vh;grid-template-rows:auto 1fr auto}
 
-/* --- שחקנים --- */
-.plist{display:flex;flex-direction:column;gap:.45rem}
-.prow{display:flex;align-items:center;gap:.5rem;background:#1C1812;border-radius:8px;padding:.5rem .7rem;font-size:.85rem}
-.prow.me{border:1.5px solid var(--yellow)}
-.prow.turn{background:#3D3410}
-.pname{font-weight:700;flex:1}
-.pstat{font-family:'Secular One',sans-serif;font-size:.78rem;color:#B6A991}
-.dot{width:7px;height:7px;border-radius:50%;background:#5E9E5A}
-.dot.off{background:#5A5142}
+/* --- סרגל עליון --- */
+#top{display:flex;align-items:center;gap:.8rem;padding:.6rem 1rem;background:#12211A;
+ border-bottom:2px solid var(--rail);flex-wrap:wrap}
+#phase{font-family:'Suez One',serif;font-size:1.25rem;color:var(--gold)}
+#whose{font-size:1.05rem;color:#8FA89A}
+.spacer{flex:1}
+.deckchip{display:flex;align-items:center;gap:.3rem;background:#0E1A14;border:1px solid var(--rail);
+ border-radius:7px;padding:.35rem .75rem;font-size:1rem;font-family:'Secular One',sans-serif}
+.deckchip i{width:9px;height:12px;border-radius:2px;display:inline-block}
+.di{background:var(--door)}.ti{background:var(--treas)}
 
-/* --- חפיסות --- */
-.decks{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem}
-.deckbtn{flex:1;min-width:120px;background:#1C1812;border:1.5px solid #4A4033;border-radius:10px;padding:.6rem;text-align:center;color:var(--cream)}
-.deckbtn:hover{border-color:var(--yellow)}
-.deckbtn b{display:block;font-family:'Suez One',serif;font-size:.9rem}
-.deckbtn span{font-size:.72rem;color:#8E836F}
+/* --- שולחן --- */
+#felt{position:relative;background:
+ radial-gradient(ellipse at 50% 45%,#2A6B4F 0%,var(--felt) 48%,#0F2C20 100%);
+ border:14px solid var(--rail);border-radius:50%/34%;margin:.8rem 1.2rem;overflow:visible;
+ box-shadow:inset 0 0 100px #0007,inset 0 0 0 3px #ffffff12,0 8px 40px #000a;padding:1rem}
+#felt::after{content:"";position:absolute;inset:26px;border:2px dashed #ffffff14;
+ border-radius:50%/34%;pointer-events:none}
+#ring{position:relative;width:100%;height:100%;min-height:480px}
+#seats{position:absolute;inset:0;pointer-events:none}
+#seats .seat{position:absolute;pointer-events:auto;transform:translate(50%,-50%);
+ transition:box-shadow .2s,border-color .2s}
+@media(max-width:820px){#ring{min-height:auto}
+ #seats{position:static;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1rem}
+ #seats .seat{position:static;transform:none}
+ #center{position:static!important;transform:none!important;width:auto!important}}
+.seat{background:#0B1712ee;border:2px solid var(--rail);border-radius:13px;padding:.7rem .9rem;
+ min-width:180px;box-shadow:0 4px 14px #0007}
+.seat.act{border-color:var(--gold);box-shadow:0 0 22px #E8B31755,0 4px 14px #0007}
+.seat.act .sname{color:var(--gold)}
+.seat.me{border-color:#5E9E5A;background:#0E211Aee}
+.seat.me::before{content:"אתה";position:absolute;top:-.65rem;right:.7rem;background:#5E9E5A;
+ color:#0B1712;font-size:.72rem;font-weight:800;padding:.1rem .5rem;border-radius:5px}
+.seat{position:relative}
+.turnbadge{position:absolute;top:-.65rem;left:.7rem;background:var(--gold);color:#1A1409;
+ font-size:.72rem;font-weight:800;padding:.1rem .5rem;border-radius:5px}
+.sname{font-weight:800;font-size:1.15rem;display:flex;align-items:center;gap:.35rem}
+.sdot{width:7px;height:7px;border-radius:50%;background:#5E9E5A}
+.sstat{font-family:'Secular One',sans-serif;font-size:.95rem;color:#9DB8A8;margin-top:.15rem}
+.sgear{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:.3rem}
+.chip{background:#0E1A14;border:1px solid var(--rail);border-radius:5px;padding:.12rem .35rem;
+ font-size:.88rem;cursor:pointer}
+.chip:hover{border-color:var(--gold)}
+.chip.off{opacity:.45}
+.chip.trap{border-color:#C4553F;background:#3A1A14;color:#E08B76}
+
+/* --- אזור קרב --- */
+#center{position:absolute;top:50%;right:50%;transform:translate(50%,-50%);width:min(560px,72%);text-align:center}
+#arena{text-align:center;padding:.5rem}
+.vs{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin:.8rem 0}
+.side{text-align:center}
+.sidenum{font-family:'Secular One',sans-serif;font-size:3.4rem;line-height:1}
+.sidelbl{font-size:1rem;color:#9DB8A8}
+.vsx{font-family:'Suez One',serif;font-size:1.5rem;color:var(--gold)}
+.win{color:#7FD87F}.lose{color:#E08B76}
 
 /* --- קלף --- */
-.card{position:relative;width:var(--cw,150px);height:calc(var(--cw,150px)*1.3968);font-size:calc(var(--cw,150px)/21);
-  background:var(--parchment);color:var(--ink);border:.3em solid var(--ink);border-radius:.55em;
-  display:flex;flex-direction:column;overflow:hidden;text-align:right;flex-shrink:0;cursor:pointer;
-  transition:transform .15s}
-.card:hover{transform:translateY(-6px)}
-.card.door{--deck:var(--door);--dink:var(--cream)}
-.card.treasure{--deck:var(--treasure);--dink:var(--ink)}
-.ctitle{font-family:'Suez One',serif;font-size:1.02em;line-height:1.15;text-align:center;padding:.45em .35em;
-  background:var(--deck);color:var(--dink);border-bottom:.3em solid var(--ink);min-height:2.4em;
-  display:flex;align-items:center;justify-content:center}
-.cart{flex:0 0 34%;margin:.4em .45em .3em;border:.18em solid var(--ink);border-radius:.25em;
-  background:var(--parchment-deep);display:grid;place-items:center;font-size:2.6em;line-height:1}
-.clevel{position:absolute;bottom:-.1em;inset-inline-start:-.1em;background:var(--ink);color:var(--parchment);
-  border-radius:.3em;padding:.1em .5em .2em;font-family:'Secular One',sans-serif;font-size:1.3em}
-.cbody{flex:1;padding:.1em .6em;overflow:hidden;font-size:.72em;line-height:1.25;font-weight:600}
-.cbad{color:#7A1E10;font-size:.95em}
-.cfoot{margin-top:auto;display:flex;justify-content:space-between;background:var(--deck);color:var(--dink);
-  border-top:.28em solid var(--ink);padding:.25em .6em .3em;font-family:'Secular One',sans-serif;font-size:.68em}
+.card{position:relative;width:var(--w,130px);height:calc(var(--w,130px)*1.3968);
+ font-size:calc(var(--w,130px)/17);background:var(--parch);color:var(--ink);
+ border:.3em solid var(--ink);border-radius:.55em;display:flex;flex-direction:column;
+ overflow:hidden;text-align:right;flex-shrink:0;cursor:pointer;transition:transform .15s}
+.card:hover{transform:translateY(-7px)}
+.card.dragging{opacity:.4;transform:scale(.95) rotate(2deg)}
+.drop{outline:3px dashed var(--gold);outline-offset:4px;background:#E8B31712;border-radius:12px}
+.dropzone{transition:outline .12s,background .12s}
+#trash{position:fixed;bottom:.7rem;left:.7rem;z-index:35;background:#12211A;border:2px dashed var(--rail);
+ color:#7A9488;border-radius:10px;padding:.7rem 1rem;font-size:.95rem;display:none}
+#trash.on{display:block}
+#trash.drop{border-color:#C4553F;color:#E08B76;background:#3A1A1440}
+.card.door{--d:var(--door);--di2:var(--cream)}
+.card.treasure{--d:var(--treas);--di2:var(--ink)}
+.ct{font-family:'Suez One',serif;font-size:1em;line-height:1.12;text-align:center;padding:.4em .3em;
+ background:var(--d);color:var(--di2);border-bottom:.3em solid var(--ink);min-height:2.3em;
+ display:flex;align-items:center;justify-content:center}
+.ca{position:relative;flex:0 0 32%;margin:.35em .4em .25em;border:.18em solid var(--ink);
+ border-radius:.25em;background:var(--parch2);display:grid;place-items:center;font-size:2.4em}
+.cl{position:absolute;bottom:-.1em;inset-inline-start:-.1em;background:var(--ink);color:var(--parch);
+ border-radius:.3em;padding:.05em .45em .15em;font-family:'Secular One',sans-serif;font-size:1.25em}
+.cb{flex:1;padding:.1em .5em;overflow:hidden;font-size:.78em;line-height:1.25;font-weight:600}
+.cbad{color:#7A1E10}
+.cf{margin-top:auto;display:flex;justify-content:space-between;background:var(--d);color:var(--di2);
+ border-top:.28em solid var(--ink);padding:.2em .5em .25em;font-family:'Secular One',sans-serif;font-size:.66em}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.hint{color:#7A9488;font-size:1.15rem;padding:1.2rem;line-height:1.6}
 
-/* --- אזורים --- */
-.cards{display:flex;flex-wrap:wrap;gap:.7rem;min-height:60px}
-.empty{color:#5A5142;font-size:.82rem;padding:1rem 0}
-.mini{display:flex;flex-wrap:wrap;gap:.3rem}
-.minicard{background:#1C1812;border:1px solid #4A4033;border-radius:6px;padding:.25rem .5rem;font-size:.74rem;cursor:pointer}
-.minicard:hover{border-color:var(--yellow)}
-
-/* --- כלים --- */
-.tools{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem}
-.stat{display:flex;align-items:center;gap:.35rem;background:#1C1812;border-radius:8px;padding:.3rem .5rem;font-size:.82rem}
-.stat b{font-family:'Secular One',sans-serif;font-size:1rem;min-width:1.4rem;text-align:center}
-.tiny{background:none;border:1px solid #4A4033;color:#D8CDB6;border-radius:5px;width:22px;height:22px;font-size:.85rem;line-height:1}
-.tiny:hover{border-color:var(--yellow);color:var(--yellow)}
+/* --- תחתית --- */
+#bottom{background:#12211A;border-top:2px solid var(--rail);padding:.7rem 1rem;
+ display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+#myhand{display:flex;gap:.6rem;overflow-x:auto;flex:1;padding-bottom:.3rem;min-height:120px}
+#acts{display:flex;flex-direction:column;gap:.5rem;min-width:230px}
+.act{background:var(--gold);color:#1A1409;border-radius:8px;padding:.75rem 1rem;font-weight:800;font-size:1.1rem}
+.act:hover{background:#F5C534}
+.act.g{background:#2D6A4F;color:var(--cream)}
+.act.g:hover{background:#3A8763}
+.act.r{background:#7A2E1E;color:var(--cream)}
+.act.r:hover{background:#9A3B27}
+.act:disabled{opacity:.3;cursor:not-allowed}
+.mini{background:none;border:1.5px solid var(--rail);color:#B8CFC2;border-radius:7px;
+ padding:.45rem .8rem;font-size:.95rem;font-weight:600}
+.mini:hover{border-color:var(--gold);color:var(--gold)}
+.ctr{display:flex;align-items:center;gap:.4rem;background:#0E1A14;border-radius:7px;padding:.4rem .6rem;font-size:1rem}
+.ctr b{font-family:'Secular One',sans-serif;font-size:1.3rem;min-width:1.6rem;text-align:center}
+.tiny{background:none;border:1px solid var(--rail);color:#B8CFC2;border-radius:5px;width:26px;height:26px;font-size:1rem;line-height:1}
 
 /* --- יומן --- */
-#log{max-height:240px;overflow-y:auto;font-size:.78rem;line-height:1.5;color:#B6A991}
-#log div{padding:.2rem 0;border-bottom:1px solid #2E2820}
+#logbtn{position:fixed;bottom:.7rem;inset-inline-start:.7rem;z-index:30;background:#12211A;
+ border:1.5px solid var(--rail);color:#B8CFC2;border-radius:8px;padding:.5rem .9rem;font-size:.95rem}
+#logbox{position:fixed;bottom:3rem;inset-inline-start:.7rem;width:360px;max-height:45vh;overflow-y:auto;
+ background:#12211Af0;border:1.5px solid var(--rail);border-radius:10px;padding:.7rem;
+ font-size:.95rem;line-height:1.6;color:#9DB8A8;display:none;z-index:30;backdrop-filter:blur(4px)}
+#logbox div{padding:.18rem 0;border-bottom:1px solid #ffffff10}
 
 /* --- מודאל --- */
-#modal{position:fixed;inset:0;background:rgba(12,10,7,.85);display:none;place-items:center;padding:1.5rem;z-index:50}
-.mbox{background:var(--table2);border:2px solid #4A4033;border-radius:14px;padding:1.4rem;max-width:520px;
-  display:flex;gap:1.4rem;flex-wrap:wrap;align-items:flex-start}
-.mact{display:flex;flex-direction:column;gap:.4rem;min-width:150px}
-#roll{font-family:'Secular One',sans-serif;font-size:2rem;color:var(--yellow);text-align:center}
+#modal{position:fixed;inset:0;background:#0A130Ee8;display:none;place-items:center;padding:1.2rem;z-index:60}
+.mb{background:#1A2620;border:2px solid var(--rail);border-radius:14px;padding:1.3rem;
+ display:flex;gap:1.3rem;flex-wrap:wrap;max-width:540px;align-items:flex-start}
+.mac{display:flex;flex-direction:column;gap:.5rem;min-width:200px}
+#toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1409;
+ padding:.7rem 1.3rem;border-radius:999px;font-weight:800;font-size:1.1rem;z-index:80;display:none}
 </style>
 </head>
 <body>
 
-<div id="gate">
-  <div class="gatebox">
-    <h1>סופר מאנצ'קין־אסטרייכר</h1>
-    <p>הכניסו שם ובחרו מין. כל אחד רואה רק את היד שלו.</p>
-    <input id="name" placeholder="השם שלך" maxlength="14">
-    <select id="sex"><option>גבר</option><option>אישה</option></select>
-    <button class="btn" onclick="join()">הצטרף למשחק</button>
-  </div>
-</div>
+<div id="gate"><div class="gbox">
+  <h1>סופר מאנצ'קין־אסטרייכר</h1>
+  <p>כל אחד רואה רק את היד שלו</p>
+  <input id="nm" placeholder="השם שלך" maxlength="14">
+  <select id="sx"><option>גבר</option><option>אישה</option></select>
+  <button class="big" onclick="join()">שב לשולחן</button>
+</div></div>
 
 <div id="app">
-  <div>
-    <div class="panel" style="margin-bottom:1rem">
-      <h2>השולחן</h2>
-      <div class="decks">
-        <button class="deckbtn" onclick="act('drawCard',{which:'door',faceUp:true})">
-          <b>פתח דלת</b><span id="dc">—</span></button>
-        <button class="deckbtn" onclick="act('drawCard',{which:'door',faceUp:false})">
-          <b>דלת ליד</b><span>סמוי</span></button>
-        <button class="deckbtn" onclick="act('drawCard',{which:'treasure',faceUp:false})">
-          <b>שלוף אוצר</b><span id="tc">—</span></button>
-        <button class="deckbtn" onclick="act('clearInPlay',{})">
-          <b>פנה שולחן</b><span>לזרוקים</span></button>
-      </div>
-      <div id="howto" style="background:#3D3410;border-radius:10px;padding:1rem;margin-bottom:.8rem;line-height:1.7;font-size:.9rem">
-        <b style="font-size:1rem">איך מתחילים</b><br>
-        חכו שכולם ייכנסו, ואז מישהו אחד לוחץ <b>"משחק חדש"</b> בצד ימין.<br>
-        כל אחד יקבל 8 קלפים ליד. <b>בתורך:</b> לוחצים <b>"פתח דלת"</b> — הקלף נחשף לכולם.<br>
-        <b>לחיצה על כל קלף</b> פותחת אותו בגדול עם האפשרויות: שים לפניי, תן למישהו, זרוק.
-      </div>
-      <div class="cards" id="inplay"></div>
-    </div>
+  <div id="top">
+    <span id="phase"></span><span id="whose"></span>
+    <span class="spacer"></span>
+    <span class="deckchip"><i class="di"></i><span id="dd">0</span></span>
+    <span class="deckchip"><i class="ti"></i><span id="td">0</span></span>
+    <button class="mini" onclick="doRoll()">🎲</button>
+    <button class="mini" onclick="go('sex')">מין</button>
+    <button class="mini" id="strictbtn" onclick="toggleStrict()"></button>
+    <button class="mini" onclick="menu()">⋯</button>
+    <button class="mini" id="newg" onclick="newGame()">משחק חדש</button>
+  </div>
 
-    <div class="panel" style="margin-bottom:1rem">
-      <h2>הציוד שלי</h2>
-      <div class="cards" id="mytable"></div>
-    </div>
-
-    <div class="panel">
-      <h2>היד שלי (<span id="hn">0</span>)</h2>
-      <div class="cards" id="hand"></div>
+  <div id="felt" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
+       ondrop="drop(event,'combatMine')">
+    <div id="ring">
+      <div id="seats"></div>
+      <div id="center"><div id="arena"></div></div>
     </div>
   </div>
 
-  <div>
-    <div class="panel" style="margin-bottom:1rem">
-      <h2>אני</h2>
-      <div class="tools">
-        <div class="stat">דרגה
-          <button class="tiny" onclick="act('setLevel',{delta:-1})">−</button>
-          <b id="lvl">1</b>
-          <button class="tiny" onclick="act('setLevel',{delta:1})">+</button></div>
-        <div class="stat">אאורה
-          <button class="tiny" onclick="act('setAura',{delta:-1})">−</button>
-          <b id="aura">0</b>
-          <button class="tiny" onclick="act('setAura',{delta:1})">+</button></div>
-      </div>
-      <div class="tools">
-        <button class="btn2" onclick="doRoll()">🎲 הטל</button>
-        <button class="btn2" onclick="act('setSex',{})">שנה מין</button>
-        <button class="btn2" onclick="act('nextTurn',{})">סיים תור</button>
-      </div>
-      <div id="rollout" style="text-align:center;font-family:'Secular One';font-size:1.6rem;color:var(--yellow);min-height:1.8rem"></div>
-    </div>
-
-    <div class="panel" style="margin-bottom:1rem">
-      <h2>שחקנים</h2>
-      <div class="plist" id="players"></div>
-      <div style="margin-top:.7rem;display:flex;gap:.4rem">
-        <button class="btn2" onclick="if(confirm('להתחיל משחק חדש? כל הקלפים יחולקו מחדש.'))act('start',{})">משחק חדש</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>יומן</h2>
-      <div id="log"></div>
-    </div>
+  <div id="bottom">
+    <div id="myhand" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
+         ondrop="drop(event,'hand')"></div>
+    <div id="acts"></div>
   </div>
 </div>
 
-<div id="modal" onclick="if(event.target.id==='modal')closeModal()">
-  <div class="mbox">
-    <div id="mcard"></div>
-    <div class="mact" id="macts"></div>
-  </div>
-</div>
+<button id="logbtn" onclick="tog()">יומן</button>
+<div id="logbox"></div>
+<div id="modal" onclick="if(event.target.id=='modal')cl()"><div class="mb">
+  <div id="mc"></div><div class="mac" id="ma"></div>
+</div></div>
+<div id="toast"></div>
+<div id="trash" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
+  ondrop="drop(event,'discard')">🗑 גררו לכאן כדי לזרוק</div>
 
 <script>
-let PID = localStorage.getItem("pid") || "";
-let ST = null;
-let sel = null;
+let PID=localStorage.getItem("pid")||"", ST=null;
+const TY={curse:"קללה",trap:"מלכודת",enhancer:"מחזק",weakener:"מחליש",trait:"אופי",class:"מקצוע",
+ base:"בסיס",exemption:"פטור",origin:"סיפור מקור",oneshot:"חד־פעמי",special:"עלה דרגה",
+ rule:"כלל בית",item:"ציוד",monster:"מפלצת"};
 
-async function api(action, args) {
-  const r = await fetch("/do", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action, pid: PID, ...args }),
-  });
-  return r.json();
-}
-async function act(a, args) { const r = await api(a, args); await refresh(); return r; }
+async function api(a,x){const r=await fetch("/do",{method:"POST",
+ headers:{"Content-Type":"application/json"},body:JSON.stringify({action:a,pid:PID,...x||{}})});return r.json()}
+async function go(a,x){const r=await api(a,x);if(r&&r.err)toast(r.err);await load();return r}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";
+ setTimeout(()=>t.style.display="none",2600)}
+function tog(){const b=document.getElementById("logbox");b.style.display=b.style.display=="block"?"none":"block"}
 
-async function join() {
-  const name = document.getElementById("name").value.trim();
-  if (!name) return;
-  const sex = document.getElementById("sex").value;
-  const r = await api("join", { name, sex });
-  PID = r.id; localStorage.setItem("pid", PID);
-  document.getElementById("gate").style.display = "none";
-  document.getElementById("app").style.display = "grid";
-  refresh();
-}
+async function join(){const n=document.getElementById("nm").value.trim();if(!n)return;
+ const r=await api("join",{name:n,sex:document.getElementById("sx").value});
+ PID=r.id;localStorage.setItem("pid",PID);
+ document.getElementById("gate").style.display="none";document.getElementById("app").style.display="grid";load()}
+async function newGame(){if(confirm("להתחיל משחק חדש?"))go("start")}
+async function doRoll(){const r=await api("roll");toast("🎲 "+r.roll);load()}
 
-async function doRoll() {
-  const r = await api("roll", { sides: 6 });
-  document.getElementById("rollout").textContent = "🎲 " + r.roll;
-  refresh();
-}
+let DRAG=null;
+function dragStart(e,u){DRAG=u;e.dataTransfer.effectAllowed="move";
+ e.dataTransfer.setData("text",u);e.target.classList.add("dragging");
+ document.getElementById("trash").classList.add("on")}
+function dragEnd(e){DRAG=null;e.target.classList.remove("dragging");
+ document.getElementById("trash").classList.remove("on","drop");
+ document.querySelectorAll(".drop").forEach(x=>x.classList.remove("drop"))}
+function allow(e){e.preventDefault();e.currentTarget.classList.add("drop")}
+function leave(e){e.currentTarget.classList.remove("drop")}
+async function drop(e,dest,toId){
+ e.preventDefault();e.currentTarget.classList.remove("drop");
+ if(!DRAG)return;
+ await go("moveCard",{uid:DRAG,dest,toId});DRAG=null}
 
-function cardHTML(c, w) {
-  const foot = c.type === "monster"
-    ? `<span>${c.treasures ?? 0} אוצרות</span><span>${c.levels ?? 1}+ דרגה</span>`
-    : `<span>${c.gold != null ? c.gold + " זהב" : ""}</span><span>${c.slot || TYPE[c.type] || ""}</span>`;
-  return `<div class="card ${c.deck}" style="--cw:${w}px" onclick="openCard('${c.uid}')">
-    <div class="ctitle">${c.name}</div>
-    <div class="cart">${c.art || ""}${c.level != null ? `<div class="clevel">${c.level}</div>` : ""}</div>
-    <div class="cbody">${(c.text || "").slice(0, 150)}
-      ${c.badStuff ? `<div class="cbad"><b>דבר רע:</b> ${c.badStuff.slice(0, 90)}</div>` : ""}</div>
-    <div class="cfoot">${foot}</div></div>`;
-}
+function card(c,w){
+ const f=c.type=="monster"?`<span>${c.treasures||0} אוצרות</span><span>${c.levels||1}+ דרגה</span>`
+  :`<span>${c.gold!=null?c.gold+" זהב":TY[c.type]||""}</span><span>${c.slot||""}</span>`;
+ return `<div class="card ${c.deck}" style="--w:${w}px" draggable="true"
+  ondragstart="dragStart(event,'${c.uid}')" ondragend="dragEnd(event)" onclick="open_('${c.uid}')">
+  <div class="ct">${c.name}</div>
+  <div class="ca">${c.art||""}${c.level!=null?`<div class="cl">${c.level}</div>`:""}</div>
+  <div class="cb">${(c.text||"").slice(0,120)}${c.badStuff?`<div class="cbad"><b>רע:</b> ${c.badStuff.slice(0,70)}</div>`:""}</div>
+  <div class="cf">${f}</div></div>`}
 
-const TYPE = { curse:"קללה", trap:"מלכודת", enhancer:"מחזק", weakener:"מחליש", trait:"אופי",
-  class:"מקצוע", base:"בסיס", exemption:"פטור", origin:"סיפור מקור", oneshot:"חד־פעמי",
-  special:"עלה דרגה", rule:"כלל בית", item:"ציוד", monster:"מפלצת" };
+function find(u){if(!ST)return null;
+ for(const c of (ST.you?.hand||[]))if(c.uid==u)return{c,where:"hand"};
+ for(const c of (ST.you?.table||[]))if(c.uid==u)return{c,where:"mytable"};
+ if(ST.combat)for(const c of [...ST.combat.monsters,...ST.combat.mine,...ST.combat.against])if(c.uid==u)return{c,where:"arena"};
+ for(const p of ST.players)for(const c of p.table)if(c.uid==u)return{c,where:"other",pid:p.id,pn:p.name};
+ return null}
 
-function findCard(uid) {
-  if (!ST) return null;
-  for (const c of [...(ST.you?.hand||[]), ...(ST.you?.table||[]), ...ST.inPlay]) if (c.uid === uid) return c;
-  for (const p of ST.players) for (const c of p.table) if (c.uid === uid) return { ...c, ownerId: p.id };
-  return null;
-}
-
-function openCard(uid) {
-  const c = findCard(uid); if (!c) return;
-  sel = c;
-  document.getElementById("mcard").innerHTML = cardHTML(c, 190).replace(/onclick="[^"]*"/, "");
-  const inHand = (ST.you?.hand||[]).some(x => x.uid === uid);
-  const onMyTable = (ST.you?.table||[]).some(x => x.uid === uid);
-  const onBoard = ST.inPlay.some(x => x.uid === uid);
-  let h = `<div style="font-size:.8rem;color:#B6A991;margin-bottom:.4rem">${TYPE[c.type]||""}</div>`;
-  if (inHand) {
-    h += `<button class="btn2" onclick="act('playToTable',{uid:'${uid}'});closeModal()">שים לפניי</button>`;
-    h += `<button class="btn2" onclick="act('playToCombat',{uid:'${uid}'});closeModal()">שים על השולחן</button>`;
-    h += ST.players.filter(p => p.id !== PID).map(p =>
-      `<button class="btn2" onclick="act('giveCard',{uid:'${uid}',toId:'${p.id}'});closeModal()">תן ל${p.name}</button>`).join("");
-    h += `<button class="btn2 warn" onclick="act('discard',{uid:'${uid}',from:'hand'});closeModal()">זרוק</button>`;
-  } else if (onMyTable) {
-    h += `<button class="btn2 warn" onclick="act('discard',{uid:'${uid}',from:'table'});closeModal()">זרוק</button>`;
-  } else if (c.ownerId) {
-    h += `<button class="btn2" onclick="act('takeFromTable',{targetId:'${c.ownerId}',uid:'${uid}'});closeModal()">קח לעצמי</button>`;
-  } else if (onBoard) {
-    h += `<div style="font-size:.8rem;color:#8E836F">על השולחן המשותף</div>`;
+function open_(u){const f=find(u);if(!f)return;const{c,where}=f;
+ document.getElementById("mc").innerHTML=card(c,215).replace(/onclick="[^"]*"/,"");
+ let h=`<div style="font-size:1rem;color:#9DB8A8;margin-bottom:.4rem">${TY[c.type]||""}</div>`;
+ const mine=ST.turnId==PID, inCombat=!!ST.combat;
+ if(where=="hand"){
+  const others=ST.players.filter(p=>p.id!=PID);
+  // --- מה שהמשחק מציע, לפי סוג הקלף והשלב ---
+  if(inCombat){
+   h+=`<button class="act g" onclick="go('playInCombat',{uid:'${u}',side:'me'});cl()">שחק לצידי</button>`;
+   h+=`<button class="act r" onclick="go('playInCombat',{uid:'${u}',side:'monster'});cl()">שחק נגד הלוחם</button>`;
+   if(c.type=="monster") h+=`<button class="act r" onclick="go('addToCombat',{uid:'${u}'});cl()">צרף לקרב הזה</button>`;
   }
-  document.getElementById("macts").innerHTML = h;
-  document.getElementById("modal").style.display = "grid";
+  if(c.type=="monster"&&!inCombat){
+   if(mine&&ST.phase=="AFTER") h+=`<button class="act" onclick="go('lookForTrouble',{uid:'${u}'});cl()">חפש צרות</button>`;
+   h+=`<button class="mini" onclick="go('forceCombat',{uid:'${u}'});cl()">פתח קרב ידנית</button>`;
+  }
+  if(c.type=="item"&&!inCombat){
+   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">צייד — נותן בונוס</button>`;
+   h+=`<button class="mini" onclick="go('equip',{uid:'${u}',carried:true});cl()">שא כנשוא — בלי בונוס</button>`;
+   h+=`<div style="font-size:.85rem;color:#7A9488;line-height:1.4">נשוא לא תופס משבצת ולא נספר בגבול היד, אבל אפשר לגנוב אותו.</div>`;
+  }
+  if(["curse","trap"].includes(c.type)){
+   h+=`<div style="font-size:.9rem;color:#E08B76;margin-top:.2rem">על מי לשחק?</div>`;
+   h+=`<button class="act r" onclick="go('putOn',{uid:'${u}'});cl()">על עצמי</button>`;
+   h+=others.map(p=>`<button class="act r" onclick="go('putOn',{uid:'${u}',toId:'${p.id}'});cl()">על ${p.name}</button>`).join("");
+  }
+  if(["trait","class","base","exemption","origin"].includes(c.type))
+   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">שים לפניי</button>`;
+  if(c.type=="rule"||c.type=="special"||c.type=="oneshot")
+   h+=`<button class="act g" onclick="go('equip',{uid:'${u}'});cl()">שים על השולחן</button>`;
+
+  // --- תמיד זמין ---
+  h+=`<div style="height:.4rem"></div>`;
+  h+=`<button class="mini" onclick="go('putOn',{uid:'${u}'});cl()">שים לפניי בכל מקרה</button>`;
+  h+=others.map(p=>`<button class="mini" onclick="go('give',{uid:'${u}',toId:'${p.id}'});cl()">תן ל${p.name}</button>`).join("");
+  h+=`<button class="mini" onclick="go('discard',{uid:'${u}',from:'hand'});cl()">זרוק</button>`;
+ }else if(where=="mytable"&&c.type=="trap"){
+  h+=`<div style="font-size:.95rem;color:#E08B76;line-height:1.4;margin-bottom:.3rem">
+    ⛓ אתה תקוע במלכודת. היא נשארת עד שתשתחרר.</div>`;
+  h+=`<button class="act" onclick="freeTrap('${u}')">🎲 נסה להשתחרר</button>`;
+  h+=ST.players.filter(p=>p.id!=PID).map(p=>
+   `<button class="mini" onclick="go('passTrap',{uid:'${u}',toId:'${p.id}'});cl()">העבר ל${p.name}</button>`).join("");
+  h+=`<button class="mini" onclick="go('discard',{uid:'${u}',from:'table'});cl()">הסר ידנית</button>`;
+ }else if(where=="mytable"){
+  h+=`<div style="font-size:.95rem;color:${c.equipped?'#7FD87F':'#9DB8A8'};margin-bottom:.2rem">
+    ${c.equipped?"● מצויד — נותן "+(c.bonus||0)+" ותופס "+(c.slot||"מקום"):"⌀ נשוא — לא נותן בונוס"}</div>`;
+  if(!c.equipped) h+=`<button class="act g" onclick="go('toggleEquip',{uid:'${u}'});cl()">צייד עכשיו</button>`;
+  h+=`<button class="mini" onclick="go('discard',{uid:'${u}',from:'table'});cl()">זרוק</button>`;
+ }else if(where=="other"){
+  h+=`<button class="act r" onclick="go('steal',{targetId:'${f.pid}',uid:'${u}'});cl()">קח לעצמי</button>`;
+ }
+ document.getElementById("ma").innerHTML=h;
+ document.getElementById("modal").style.display="grid"}
+function cl(){document.getElementById("modal").style.display="none"}
+
+async function load(){
+ const r=await fetch("/state?pid="+PID);ST=await r.json();if(!ST.you)return;
+ const mine=ST.turnId==PID;
+ document.getElementById("phase").textContent=ST.phaseText||"";
+ document.getElementById("whose").textContent=ST.started?(mine?"— תורך":"— תורו של "+ST.turnName):"";
+ document.getElementById("dd").textContent=ST.decks.door;
+ document.getElementById("td").textContent=ST.decks.treasure;
+ document.getElementById("newg").style.display=ST.started?"none":"block";
+ const sb=document.getElementById("strictbtn");
+ sb.textContent=ST.strict?"🔒 אכיפה":"🔓 חופשי";
+ sb.style.color=ST.strict?"#7FD87F":"#E8B317";
+
+ const N=ST.players.length, wide=window.innerWidth>820;
+ document.getElementById("seats").innerHTML=ST.players.map((p,i)=>{
+  let pos="";
+  if(wide){
+   const myIdx=ST.players.findIndex(x=>x.id==PID);
+   const k=((i-myIdx)+N)%N;                       // אני תמיד למטה
+   const ang=Math.PI/2 + (k/N)*2*Math.PI;
+   const x=50+44*Math.cos(ang), y=50+43*Math.sin(ang);
+   pos=`right:${x}%;top:${y}%;`;
+  }
+  return `
+  <div class="seat dropzone ${p.id==ST.turnId?'act':''} ${p.id==PID?'me':''}" style="${pos}"
+   ondragover="allow(event)" ondragleave="leave(event)" ondrop="drop(event,'table','${p.id}')">
+   ${p.id==ST.turnId?'<span class="turnbadge">תורו</span>':''}
+   <div class="sname"><span class="sdot"></span>${p.name}</div>
+   <div class="sstat">דרגה ${p.level} · כוח ${p.power} · אאורה ${p.aura} · ${p.hand} ביד</div>
+   ${p.table.length?`<div class="sgear">${p.table.map(c=>
+     `<span class="chip ${c.type=='trap'?'trap':(!c.equipped?'off':'')}" title="${c.type=='trap'?'מלכודת פעילה':(c.equipped?'מצויד':'נשוא')}" onclick="open_('${c.uid}')">${c.art||""}${c.type=='trap'?" ⛓":(c.bonus&&c.equipped?"+"+c.bonus:(!c.equipped?" ⌀":""))}</span>`).join("")}</div>`:""}
+  </div>`}).join("");
+
+ const ar=document.getElementById("arena");
+ if(ST.combat){
+  const P=ST.combat.power, win=P.mine>=P.mon;
+  ar.innerHTML=`
+   <div class="row">${ST.combat.monsters.map(c=>card(c,175)).join("")}</div>
+   <div class="vs">
+     <div class="side"><div class="sidenum ${win?'win':''}">${P.mine}</div><div class="sidelbl">אתם</div></div>
+     <div class="vsx">מול</div>
+     <div class="side"><div class="sidenum ${win?'':'lose'}">${P.mon}</div><div class="sidelbl">המפלצת</div></div>
+   </div>
+   ${ST.combat.mine.length||ST.combat.against.length?`<div class="row" style="margin-top:.5rem">
+     ${ST.combat.mine.map(c=>card(c,120)).join("")}${ST.combat.against.map(c=>card(c,120)).join("")}</div>`:""}`;
+ }else if(ST.pending){
+  ar.innerHTML=`<div class="hint" style="color:var(--gold);font-size:1.5rem">
+   ניצחת! ${ST.pending.count} אוצרות ממתינים לך</div>`;
+ }else if(!ST.started){
+  ar.innerHTML=`<div class="hint">חכו שכולם יישבו, ואז לחצו <b>משחק חדש</b> למעלה</div>`;
+ }else{
+  ar.innerHTML=`<div class="hint">${mine?"השולחן פנוי — המשיכו בתור שלכם":"ממתינים ל"+ST.turnName}
+   <div style="font-size:.9rem;margin-top:.6rem;opacity:.7">אפשר לגרור קלפים: לשולחן, לכיסא של שחקן, או לפח</div></div>`;
+ }
+
+ document.getElementById("myhand").innerHTML=ST.you.hand.map(c=>card(c,150)).join("")
+  ||'<div class="hint">אין קלפים ביד</div>';
+
+ let a=`<div class="ctr">דרגה <button class="tiny" onclick="go('lvl',{d:-1})">−</button>
+   <b>${ST.you.level}</b><button class="tiny" onclick="go('lvl',{d:1})">+</button></div>
+  <div class="ctr">אאורה <button class="tiny" onclick="go('aura',{d:-1})">−</button>
+   <b>${ST.you.aura}</b><button class="tiny" onclick="go('aura',{d:1})">+</button></div>`;
+ if(ST.started&&!mine&&ST.combat){
+  a+=`<div style="font-size:.95rem;color:#9DB8A8">קרב של ${ST.turnName}</div>`;
+  a+=`<button class="act g" onclick="go('help',{helperId:'${PID}'})">אני עוזר</button>`;
+  a+=`<div style="font-size:.85rem;color:#7A9488;line-height:1.4">אפשר גם ללחוץ על קלף ביד ולשחק אותו לתוך הקרב</div>`;
+ }
+ if(ST.started&&mine){
+  if(ST.pending) a+=`<button class="act" onclick="go('takeTreasures')">קח ${ST.pending.count} אוצרות</button>`;
+  else if(ST.phase=="START"){
+   const gear=ST.you.hand.filter(c=>c.type=="item").length;
+   if(gear&&ST.you.power<4) a+=`<div style="background:#7A2E1E;border-radius:7px;padding:.6rem .8rem;font-size:.95rem;line-height:1.5">
+     ⚠ הכוח שלך ${ST.you.power} בלבד. יש לך ${gear} פריטי ציוד ביד —<br>שחקו אותם <b>לפני</b> שתפתחו דלת.</div>`;
+   a+=`<button class="act" onclick="kick()">פתח דלת</button>`;}
+  else if(ST.phase=="COMBAT"){
+   a+=`<button class="act g" onclick="go('resolve')">הכרע קרב</button>`;
+   if(ST.combat?.mustFlee) a+=`<button class="act r" onclick="fleeNow()">ברח 🎲</button>`;
+   a+=ST.players.filter(p=>p.id!=PID).map(p=>
+    `<button class="mini" onclick="go('help',{helperId:'${p.id}'})">${p.name} עוזר</button>`).join("");
+  }
+  else if(ST.phase=="AFTER") a+=`<button class="act g" onclick="go('lootRoom')">בזוז את החדר</button>
+   <div style="font-size:.95rem;color:#7A9488;line-height:1.4">או לחצו על מפלצת ביד ← חפש צרות</div>`;
+  a+=`<button class="act" onclick="go('endTurn')">סיים תור</button>`;
+ }
+ document.getElementById("acts").innerHTML=a;
+ document.getElementById("logbox").innerHTML=ST.log.map(l=>`<div>${l.m}</div>`).join("");
 }
-function closeModal(){ document.getElementById("modal").style.display = "none"; }
+async function toggleStrict(){await go("setStrict",{on:!ST.strict});
+ toast(ST.strict?"אכיפת חוקים פעילה":"מצב חופשי — הכול מותר")}
+function menu(){
+ const h=`<div style="font-size:1rem;color:#9DB8A8;margin-bottom:.3rem">פעולות ידניות</div>
+  <button class="mini" onclick="go('setPhase',{phase:'START'});cl()">חזור לתחילת תור</button>
+  <button class="mini" onclick="go('setPhase',{phase:'AFTER'});cl()">עבור לשלב אחרי הדלת</button>
+  <button class="mini" onclick="go('setPhase',{phase:'COMBAT'});cl()">הכנס למצב קרב</button>
+  ${ST.combat?`<button class="mini" onclick="go('cancelCombat');cl()">בטל את הקרב</button>`:""}
+  <div style="font-size:.85rem;color:#7A9488;line-height:1.4;margin-top:.3rem">
+   המשחק לא חוסם אתכם. אם משהו נתקע, פשוט העבירו שלב ידנית.</div>`;
+ document.getElementById("mc").innerHTML="";
+ document.getElementById("ma").innerHTML=h;
+ document.getElementById("modal").style.display="grid"}
+async function freeTrap(u){
+ const r=await api("tryEscapeTrap",{uid:u});
+ toast(r.freed?`🎲 ${r.roll} — השתחררת!`:`🎲 ${r.roll} — עדיין תקוע`);
+ cl();load()}
+async function kick(){
+ const r=await api("kickDoor");
+ if(r.err){toast(r.err);return}
+ if(r.drew){
+  if(r.combat) toast("⚔ "+r.drew.name+" — קרב!");
+  else if(r.curse) toast("☠ "+r.drew.name+" — חל עליך");
+  else toast("↓ "+r.drew.name+" — נכנס ליד");
+ }
+ load()}
+async function fleeNow(){const r=await api("flee");
+ toast(r.escaped?`🎲 ${r.roll} — נמלטת!`:`🎲 ${r.roll} — ${r.badStuff||"נתפסת"}`);load()}
 
-async function refresh() {
-  const r = await fetch("/state?pid=" + PID);
-  ST = await r.json();
-  if (!ST.you) return;
-
-  document.getElementById("lvl").textContent = ST.you.level;
-  document.getElementById("aura").textContent = ST.you.aura;
-  document.getElementById("hn").textContent = ST.you.hand.length;
-  document.getElementById("dc").textContent = ST.deckCounts.door + " נותרו";
-  document.getElementById("tc").textContent = ST.deckCounts.treasure + " נותרו";
-
-  document.getElementById("hand").innerHTML =
-    ST.you.hand.map(c => cardHTML(c, 140)).join("") || '<div class="empty">אין קלפים ביד</div>';
-  document.getElementById("mytable").innerHTML =
-    ST.you.table.map(c => cardHTML(c, 130)).join("") || '<div class="empty">אין ציוד</div>';
-  document.getElementById("inplay").innerHTML =
-    ST.inPlay.map(c => cardHTML(c, 150)).join("") ||
-    (ST.started ? '<div class="empty">השולחן ריק — לחצו "פתח דלת"</div>' : "");
-  document.getElementById("howto").style.display = ST.started ? "none" : "block";
-
-  document.getElementById("players").innerHTML = ST.players.map((p, i) => `
-    <div class="prow ${p.id===PID?'me':''} ${i===ST.turn?'turn':''}">
-      <span class="dot ${p.connected?'':'off'}"></span>
-      <span class="pname">${p.name}</span>
-      <span class="pstat">ד${p.level} · א${p.aura} · ${p.handCount} ביד</span>
-    </div>
-    ${p.table.length ? `<div class="mini">${p.table.map(c =>
-      `<span class="minicard" onclick="openCard('${c.uid}')">${c.art||""} ${c.name.slice(0,16)}</span>`).join("")}</div>` : ""}
-  `).join("");
-
-  document.getElementById("log").innerHTML = ST.log.map(l => `<div>${l.msg}</div>`).join("");
-}
-
-if (PID) {
-  fetch("/state?pid=" + PID).then(r => r.json()).then(s => {
-    if (s.you) {
-      document.getElementById("gate").style.display = "none";
-      document.getElementById("app").style.display = "grid";
-      refresh();
-    }
-  });
-}
-setInterval(() => { if (PID && ST) refresh(); }, 2000);
+if(PID)fetch("/state?pid="+PID).then(r=>r.json()).then(s=>{if(s.you){
+ document.getElementById("gate").style.display="none";
+ document.getElementById("app").style.display="grid";load()}});
+setInterval(()=>{if(PID&&ST)load()},1800);
 </script>
 </body>
 </html>
