@@ -89,6 +89,13 @@ function playerPower(p) {
   for (const c of p.table) if (c.type === "item" && c.equipped) v += c.bonus || 0;
   return v;
 }
+/* קרב שנשאר בלי מפלצות ובלי קלפים — מתפוגג */
+function tidyCombat() {
+  if (!S.combat) return;
+  const empty = !S.combat.monsters.length && !S.combat.mine.length && !S.combat.against.length;
+  if (empty) { S.combat = null; if (S.phase === "COMBAT") S.phase = "START"; }
+}
+
 function combatPower() {
   if (!S.combat) return null;
   const p = cur();
@@ -406,6 +413,7 @@ const A = {
 };
 
 function view(pid) {
+  tidyCombat();
   const p = me(pid);
   return {
     you: p && { ...p, power: playerPower(p) },
