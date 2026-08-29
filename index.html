@@ -184,10 +184,11 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
     <span class="deckchip"><i class="di"></i><span id="dd">0</span></span>
     <span class="deckchip"><i class="ti"></i><span id="td">0</span></span>
     <button class="mini" onclick="doRoll()">🎲</button>
-    <button class="mini" onclick="go('sex')">מין</button>
+    <button class="mini" onclick="go('sex')" id="mysex"></button>
     <button class="mini" id="strictbtn" onclick="toggleStrict()"></button>
+    <button class="mini" onclick="rename()" id="mename"></button>
     <button class="mini" onclick="menu()">⋯</button>
-    <button class="mini" id="newg" onclick="newGame()">משחק חדש</button>
+    <button class="mini" onclick="newGame()">משחק חדש</button>
   </div>
 
   <div id="felt" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
@@ -214,6 +215,15 @@ input,select{width:100%;background:#0E1A14;border:1.5px solid var(--rail);border
   <div id="mc"></div><div class="mac" id="ma"></div>
 </div></div>
 <div id="toast"></div>
+<div id="vote" style="position:fixed;inset:0;background:#0A130Ee8;display:none;place-items:center;z-index:90">
+ <div style="background:#1A2620;border:2px solid var(--gold);border-radius:14px;padding:1.6rem;text-align:center;max-width:400px">
+  <div style="font-family:'Suez One',serif;font-size:1.3rem;margin-bottom:.5rem">להתחיל משחק חדש?</div>
+  <div id="votecount" style="color:#9DB8A8;font-size:1rem;margin-bottom:1.1rem"></div>
+  <div style="display:flex;gap:.6rem;justify-content:center">
+   <button class="act g" onclick="go('voteRestart',{yes:true})">מאשר</button>
+   <button class="act r" onclick="go('voteRestart',{yes:false})">לא</button>
+  </div>
+ </div></div>
 <div id="trash" class="dropzone" ondragover="allow(event)" ondragleave="leave(event)"
   ondrop="drop(event,'discard')">🗑 גררו לכאן כדי לזרוק</div>
 
@@ -234,7 +244,13 @@ async function join(){const n=document.getElementById("nm").value.trim();if(!n)r
  const r=await api("join",{name:n,sex:document.getElementById("sx").value});
  PID=r.id;localStorage.setItem("pid",PID);
  document.getElementById("gate").style.display="none";document.getElementById("app").style.display="grid";load()}
-async function newGame(){if(confirm("להתחיל משחק חדש?"))go("start")}
+async function newGame(){
+ if(!ST.started){go("start");return}
+ if(ST.players.length<2){if(confirm("להתחיל משחק חדש?"))go("start");return}
+ go("askRestart");toast("נשלחה בקשה לכל השחקנים")}
+async function rename(){
+ const n=prompt("שם חדש:",ST.you.name);
+ if(n&&n.trim())go("rename",{name:n.trim()})}
 async function doRoll(){const r=await api("roll");toast("🎲 "+r.roll);load()}
 
 let DRAG=null;
@@ -346,7 +362,13 @@ async function load(){
  document.getElementById("whose").textContent=ST.started?(mine?"— תורך":"— תורו של "+ST.turnName):"";
  document.getElementById("dd").textContent=ST.decks.door;
  document.getElementById("td").textContent=ST.decks.treasure;
- document.getElementById("newg").style.display=ST.started?"none":"block";
+ document.getElementById("mename").textContent="✏ "+ST.you.name;
+ document.getElementById("mysex").textContent=ST.you.sex;
+ const rv=ST.restartVotes;
+ const vd=document.getElementById("vote");
+ if(rv&&!rv.includes(PID)){vd.style.display="grid";
+  document.getElementById("votecount").textContent=`${rv.length} מתוך ${ST.players.length} אישרו`;}
+ else vd.style.display="none";
  const sb=document.getElementById("strictbtn");
  sb.textContent=ST.strict?"🔒 אכיפה":"🔓 חופשי";
  sb.style.color=ST.strict?"#7FD87F":"#E8B317";
