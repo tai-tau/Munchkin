@@ -28,7 +28,7 @@ function buildDeck(which) {
 const S = {
   players: [], door: buildDeck("door"), treasure: buildDeck("treasure"),
   doorDiscard: [], treasureDiscard: [],
-  turn: 0, phase: "LOBBY", log: [], started: false, strict: true,
+  turn: 0, phase: "LOBBY", log: [], started: false, strict: true, restartVotes: null,
   combat: null, pending: null,
 };
 
@@ -108,6 +108,35 @@ function combatPower() {
 }
 
 const A = {
+  rename({ pid, name }) {
+    const p = me(pid); if (!p || !name) return;
+    const old = p.name; p.name = name.slice(0, 14);
+    log(`${old} משנה שם ל${p.name}`);
+  },
+
+  changeSex({ pid, sex }) {
+    const p = me(pid); if (!p) return;
+    p.sex = sex; log(`${p.name} → ${sex}`);
+  },
+
+  /* --- ריסטארט בהסכמת כולם --- */
+  askRestart({ pid }) {
+    const p = me(pid); if (!p) return;
+    S.restartVotes = [p.id];
+    log(`${p.name} מבקש להתחיל משחק חדש — צריך אישור מכולם`);
+  },
+  voteRestart({ pid, yes }) {
+    const p = me(pid); if (!p || !S.restartVotes) return;
+    if (!yes) { S.restartVotes = null; log(`${p.name} סירב. המשחק ממשיך.`); return; }
+    if (!S.restartVotes.includes(p.id)) S.restartVotes.push(p.id);
+    log(`${p.name} אישר (${S.restartVotes.length}/${S.players.length})`);
+    if (S.restartVotes.length >= S.players.length) {
+      S.restartVotes = null;
+      A.start();
+    }
+  },
+  cancelRestart({ pid }) { S.restartVotes = null; log(`${me(pid)?.name} ביטל את הבקשה`); },
+
   setStrict({ pid, on }) {
     S.strict = !!on;
     log(`${me(pid)?.name || "מישהו"} ${on ? "הפעיל" : "כיבה"} אכיפת חוקים`);
@@ -118,7 +147,12 @@ const A = {
     if (p) { p.on = true; return { id: p.id }; }
     p = { id: Math.random().toString(36).slice(2, 9), name, sex: sex || "גבר",
           level: 1, aura: 0, hand: [], table: [], on: true };
-    S.players.push(p); log(`${name} הצטרף`);
+    S.players.push(p);
+    if (S.started) {
+      for (let i = 0; i < 4; i++) { const c = draw("door"); if (c) p.hand.push(c); }
+      for (let i = 0; i < 4; i++) { const c = draw("treasure"); if (c) p.hand.push(c); }
+      log(`${name} הצטרף באמצע וקיבל יד`);
+    } else log(`${name} הצטרף`);
     return { id: p.id };
   },
 
@@ -422,7 +456,7 @@ function view(pid) {
       hand: x.hand.length, table: x.table, on: x.on, power: playerPower(x),
     })),
     turn: S.turn, turnId: cur()?.id, turnName: cur()?.name || "",
-    phase: S.phase, phaseText: PH[S.phase], strict: S.strict,
+    phase: S.phase, phaseText: PH[S.phase], strict: S.strict, restartVotes: S.restartVotes,
     combat: S.combat && { ...S.combat, power: combatPower() },
     pending: S.pending,
     decks: { door: S.door.length, treasure: S.treasure.length, dd: S.doorDiscard.length, td: S.treasureDiscard.length },
