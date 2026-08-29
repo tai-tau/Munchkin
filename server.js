@@ -47,6 +47,10 @@ const S = {
   started: false,
 };
 
+/* בניית חפיסות מיד, כדי שהמונים יציגו נכון עוד לפני שמתחילים */
+S.door = buildDeck("door");
+S.treasure = buildDeck("treasure");
+
 function reset() {
   S.door = buildDeck("door");
   S.treasure = buildDeck("treasure");
