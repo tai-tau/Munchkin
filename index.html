@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>סופר מאנצ'קין־אסטרייכר</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Secular+One&family=Suez+One&display=swap');
+*{box-sizing:border-box}
+:root{
+  --parchment:#F2E4C2;--parchment-deep:#E2CFA2;--ink:#17120D;
+  --door:#9A2B1C;--treasure:#C89218;--cream:#FBF3DF;
+  --table:#221E18;--table2:#2E2820;--yellow:#E8B317;
+}
+body{margin:0;background:var(--table);color:var(--cream);font-family:'Assistant',system-ui,sans-serif;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--yellow);outline-offset:2px}
+
+/* --- כניסה --- */
+#gate{display:grid;place-items:center;min-height:100vh;padding:2rem}
+.gatebox{background:var(--table2);border:2px solid #4A4033;border-radius:16px;padding:2rem;max-width:380px;width:100%}
+.gatebox h1{font-family:'Suez One',serif;font-size:1.3rem;margin:0 0 .3rem}
+.gatebox p{color:#B6A991;font-size:.85rem;margin:0 0 1.4rem;line-height:1.5}
+input,select{width:100%;background:#0F0C08;border:1.5px solid #4A4033;border-radius:8px;color:var(--cream);
+  padding:.6rem .8rem;font-family:inherit;font-size:.95rem;margin-bottom:.8rem}
+.btn{background:var(--yellow);color:#1A1409;border:0;border-radius:8px;padding:.65rem 1.2rem;font-weight:800;font-size:.9rem;width:100%}
+.btn:hover{background:#F5C534}
+.btn2{background:none;border:1.5px solid #4A4033;color:#D8CDB6;border-radius:8px;padding:.45rem .85rem;font-size:.82rem;font-weight:600}
+.btn2:hover{border-color:var(--yellow);color:var(--yellow)}
+.btn2.warn:hover{border-color:#C4553F;color:#E08B76}
+
+/* --- פריסה --- */
+#app{display:none;grid-template-columns:1fr 300px;gap:1rem;padding:1rem;max-width:1500px;margin:0 auto}
+@media(max-width:900px){#app{grid-template-columns:1fr}}
+.panel{background:var(--table2);border:1.5px solid #3B3428;border-radius:12px;padding:.9rem}
+.panel h2{font-family:'Suez One',serif;font-size:.95rem;margin:0 0 .7rem;color:var(--yellow)}
+
+/* --- שחקנים --- */
+.plist{display:flex;flex-direction:column;gap:.45rem}
+.prow{display:flex;align-items:center;gap:.5rem;background:#1C1812;border-radius:8px;padding:.5rem .7rem;font-size:.85rem}
+.prow.me{border:1.5px solid var(--yellow)}
+.prow.turn{background:#3D3410}
+.pname{font-weight:700;flex:1}
+.pstat{font-family:'Secular One',sans-serif;font-size:.78rem;color:#B6A991}
+.dot{width:7px;height:7px;border-radius:50%;background:#5E9E5A}
+.dot.off{background:#5A5142}
+
+/* --- חפיסות --- */
+.decks{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem}
+.deckbtn{flex:1;min-width:120px;background:#1C1812;border:1.5px solid #4A4033;border-radius:10px;padding:.6rem;text-align:center;color:var(--cream)}
+.deckbtn:hover{border-color:var(--yellow)}
+.deckbtn b{display:block;font-family:'Suez One',serif;font-size:.9rem}
+.deckbtn span{font-size:.72rem;color:#8E836F}
+
+/* --- קלף --- */
+.card{position:relative;width:var(--cw,150px);height:calc(var(--cw,150px)*1.3968);font-size:calc(var(--cw,150px)/21);
+  background:var(--parchment);color:var(--ink);border:.3em solid var(--ink);border-radius:.55em;
+  display:flex;flex-direction:column;overflow:hidden;text-align:right;flex-shrink:0;cursor:pointer;
+  transition:transform .15s}
+.card:hover{transform:translateY(-6px)}
+.card.door{--deck:var(--door);--dink:var(--cream)}
+.card.treasure{--deck:var(--treasure);--dink:var(--ink)}
+.ctitle{font-family:'Suez One',serif;font-size:1.02em;line-height:1.15;text-align:center;padding:.45em .35em;
+  background:var(--deck);color:var(--dink);border-bottom:.3em solid var(--ink);min-height:2.4em;
+  display:flex;align-items:center;justify-content:center}
+.cart{flex:0 0 34%;margin:.4em .45em .3em;border:.18em solid var(--ink);border-radius:.25em;
+  background:var(--parchment-deep);display:grid;place-items:center;font-size:2.6em;line-height:1}
+.clevel{position:absolute;bottom:-.1em;inset-inline-start:-.1em;background:var(--ink);color:var(--parchment);
+  border-radius:.3em;padding:.1em .5em .2em;font-family:'Secular One',sans-serif;font-size:1.3em}
+.cbody{flex:1;padding:.1em .6em;overflow:hidden;font-size:.72em;line-height:1.25;font-weight:600}
+.cbad{color:#7A1E10;font-size:.95em}
+.cfoot{margin-top:auto;display:flex;justify-content:space-between;background:var(--deck);color:var(--dink);
+  border-top:.28em solid var(--ink);padding:.25em .6em .3em;font-family:'Secular One',sans-serif;font-size:.68em}
+
+/* --- אזורים --- */
+.cards{display:flex;flex-wrap:wrap;gap:.7rem;min-height:60px}
+.empty{color:#5A5142;font-size:.82rem;padding:1rem 0}
+.mini{display:flex;flex-wrap:wrap;gap:.3rem}
+.minicard{background:#1C1812;border:1px solid #4A4033;border-radius:6px;padding:.25rem .5rem;font-size:.74rem;cursor:pointer}
+.minicard:hover{border-color:var(--yellow)}
+
+/* --- כלים --- */
+.tools{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem}
+.stat{display:flex;align-items:center;gap:.35rem;background:#1C1812;border-radius:8px;padding:.3rem .5rem;font-size:.82rem}
+.stat b{font-family:'Secular One',sans-serif;font-size:1rem;min-width:1.4rem;text-align:center}
+.tiny{background:none;border:1px solid #4A4033;color:#D8CDB6;border-radius:5px;width:22px;height:22px;font-size:.85rem;line-height:1}
+.tiny:hover{border-color:var(--yellow);color:var(--yellow)}
+
+/* --- יומן --- */
+#log{max-height:240px;overflow-y:auto;font-size:.78rem;line-height:1.5;color:#B6A991}
+#log div{padding:.2rem 0;border-bottom:1px solid #2E2820}
+
+/* --- מודאל --- */
+#modal{position:fixed;inset:0;background:rgba(12,10,7,.85);display:none;place-items:center;padding:1.5rem;z-index:50}
+.mbox{background:var(--table2);border:2px solid #4A4033;border-radius:14px;padding:1.4rem;max-width:520px;
+  display:flex;gap:1.4rem;flex-wrap:wrap;align-items:flex-start}
+.mact{display:flex;flex-direction:column;gap:.4rem;min-width:150px}
+#roll{font-family:'Secular One',sans-serif;font-size:2rem;color:var(--yellow);text-align:center}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gatebox">
+    <h1>סופר מאנצ'קין־אסטרייכר</h1>
+    <p>הכניסו שם ובחרו מין. כל אחד רואה רק את היד שלו.</p>
+    <input id="name" placeholder="השם שלך" maxlength="14">
+    <select id="sex"><option>גבר</option><option>אישה</option></select>
+    <button class="btn" onclick="join()">הצטרף למשחק</button>
+  </div>
+</div>
+
+<div id="app">
+  <div>
+    <div class="panel" style="margin-bottom:1rem">
+      <h2>השולחן</h2>
+      <div class="decks">
+        <button class="deckbtn" onclick="act('drawCard',{which:'door',faceUp:true})">
+          <b>פתח דלת</b><span id="dc">—</span></button>
+        <button class="deckbtn" onclick="act('drawCard',{which:'door',faceUp:false})">
+          <b>דלת ליד</b><span>סמוי</span></button>
+        <button class="deckbtn" onclick="act('drawCard',{which:'treasure',faceUp:false})">
+          <b>שלוף אוצר</b><span id="tc">—</span></button>
+        <button class="deckbtn" onclick="act('clearInPlay',{})">
+          <b>פנה שולחן</b><span>לזרוקים</span></button>
+      </div>
+      <div class="cards" id="inplay"></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:1rem">
+      <h2>הציוד שלי</h2>
+      <div class="cards" id="mytable"></div>
+    </div>
+
+    <div class="panel">
+      <h2>היד שלי (<span id="hn">0</span>)</h2>
+      <div class="cards" id="hand"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel" style="margin-bottom:1rem">
+      <h2>אני</h2>
+      <div class="tools">
+        <div class="stat">דרגה
+          <button class="tiny" onclick="act('setLevel',{delta:-1})">−</button>
+          <b id="lvl">1</b>
+          <button class="tiny" onclick="act('setLevel',{delta:1})">+</button></div>
+        <div class="stat">אאורה
+          <button class="tiny" onclick="act('setAura',{delta:-1})">−</button>
+          <b id="aura">0</b>
+          <button class="tiny" onclick="act('setAura',{delta:1})">+</button></div>
+      </div>
+      <div class="tools">
+        <button class="btn2" onclick="doRoll()">🎲 הטל</button>
+        <button class="btn2" onclick="act('setSex',{})">שנה מין</button>
+        <button class="btn2" onclick="act('nextTurn',{})">סיים תור</button>
+      </div>
+      <div id="rollout" style="text-align:center;font-family:'Secular One';font-size:1.6rem;color:var(--yellow);min-height:1.8rem"></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:1rem">
+      <h2>שחקנים</h2>
+      <div class="plist" id="players"></div>
+      <div style="margin-top:.7rem;display:flex;gap:.4rem">
+        <button class="btn2" onclick="if(confirm('להתחיל משחק חדש? כל הקלפים יחולקו מחדש.'))act('start',{})">משחק חדש</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>יומן</h2>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal" onclick="if(event.target.id==='modal')closeModal()">
+  <div class="mbox">
+    <div id="mcard"></div>
+    <div class="mact" id="macts"></div>
+  </div>
+</div>
+
+<script>
+let PID = localStorage.getItem("pid") || "";
+let ST = null;
+let sel = null;
+
+async function api(action, args) {
+  const r = await fetch("/do", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, pid: PID, ...args }),
+  });
+  return r.json();
+}
+async function act(a, args) { const r = await api(a, args); await refresh(); return r; }
+
+async function join() {
+  const name = document.getElementById("name").value.trim();
+  if (!name) return;
+  const sex = document.getElementById("sex").value;
+  const r = await api("join", { name, sex });
+  PID = r.id; localStorage.setItem("pid", PID);
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("app").style.display = "grid";
+  refresh();
+}
+
+async function doRoll() {
+  const r = await api("roll", { sides: 6 });
+  document.getElementById("rollout").textContent = "🎲 " + r.roll;
+  refresh();
+}
+
+function cardHTML(c, w) {
+  const foot = c.type === "monster"
+    ? `<span>${c.treasures ?? 0} אוצרות</span><span>${c.levels ?? 1}+ דרגה</span>`
+    : `<span>${c.gold != null ? c.gold + " זהב" : ""}</span><span>${c.slot || TYPE[c.type] || ""}</span>`;
+  return `<div class="card ${c.deck}" style="--cw:${w}px" onclick="openCard('${c.uid}')">
+    <div class="ctitle">${c.name}</div>
+    <div class="cart">${c.art || ""}${c.level != null ? `<div class="clevel">${c.level}</div>` : ""}</div>
+    <div class="cbody">${(c.text || "").slice(0, 150)}
+      ${c.badStuff ? `<div class="cbad"><b>דבר רע:</b> ${c.badStuff.slice(0, 90)}</div>` : ""}</div>
+    <div class="cfoot">${foot}</div></div>`;
+}
+
+const TYPE = { curse:"קללה", trap:"מלכודת", enhancer:"מחזק", weakener:"מחליש", trait:"אופי",
+  class:"מקצוע", base:"בסיס", exemption:"פטור", origin:"סיפור מקור", oneshot:"חד־פעמי",
+  special:"עלה דרגה", rule:"כלל בית", item:"ציוד", monster:"מפלצת" };
+
+function findCard(uid) {
+  if (!ST) return null;
+  for (const c of [...(ST.you?.hand||[]), ...(ST.you?.table||[]), ...ST.inPlay]) if (c.uid === uid) return c;
+  for (const p of ST.players) for (const c of p.table) if (c.uid === uid) return { ...c, ownerId: p.id };
+  return null;
+}
+
+function openCard(uid) {
+  const c = findCard(uid); if (!c) return;
+  sel = c;
+  document.getElementById("mcard").innerHTML = cardHTML(c, 190).replace(/onclick="[^"]*"/, "");
+  const inHand = (ST.you?.hand||[]).some(x => x.uid === uid);
+  const onMyTable = (ST.you?.table||[]).some(x => x.uid === uid);
+  const onBoard = ST.inPlay.some(x => x.uid === uid);
+  let h = `<div style="font-size:.8rem;color:#B6A991;margin-bottom:.4rem">${TYPE[c.type]||""}</div>`;
+  if (inHand) {
+    h += `<button class="btn2" onclick="act('playToTable',{uid:'${uid}'});closeModal()">שים לפניי</button>`;
+    h += `<button class="btn2" onclick="act('playToCombat',{uid:'${uid}'});closeModal()">שים על השולחן</button>`;
+    h += ST.players.filter(p => p.id !== PID).map(p =>
+      `<button class="btn2" onclick="act('giveCard',{uid:'${uid}',toId:'${p.id}'});closeModal()">תן ל${p.name}</button>`).join("");
+    h += `<button class="btn2 warn" onclick="act('discard',{uid:'${uid}',from:'hand'});closeModal()">זרוק</button>`;
+  } else if (onMyTable) {
+    h += `<button class="btn2 warn" onclick="act('discard',{uid:'${uid}',from:'table'});closeModal()">זרוק</button>`;
+  } else if (c.ownerId) {
+    h += `<button class="btn2" onclick="act('takeFromTable',{targetId:'${c.ownerId}',uid:'${uid}'});closeModal()">קח לעצמי</button>`;
+  } else if (onBoard) {
+    h += `<div style="font-size:.8rem;color:#8E836F">על השולחן המשותף</div>`;
+  }
+  document.getElementById("macts").innerHTML = h;
+  document.getElementById("modal").style.display = "grid";
+}
+function closeModal(){ document.getElementById("modal").style.display = "none"; }
+
+async function refresh() {
+  const r = await fetch("/state?pid=" + PID);
+  ST = await r.json();
+  if (!ST.you) return;
+
+  document.getElementById("lvl").textContent = ST.you.level;
+  document.getElementById("aura").textContent = ST.you.aura;
+  document.getElementById("hn").textContent = ST.you.hand.length;
+  document.getElementById("dc").textContent = ST.deckCounts.door + " נותרו";
+  document.getElementById("tc").textContent = ST.deckCounts.treasure + " נותרו";
+
+  document.getElementById("hand").innerHTML =
+    ST.you.hand.map(c => cardHTML(c, 140)).join("") || '<div class="empty">אין קלפים ביד</div>';
+  document.getElementById("mytable").innerHTML =
+    ST.you.table.map(c => cardHTML(c, 130)).join("") || '<div class="empty">אין ציוד</div>';
+  document.getElementById("inplay").innerHTML =
+    ST.inPlay.map(c => cardHTML(c, 150)).join("") || '<div class="empty">השולחן ריק — לחצו "פתח דלת"</div>';
+
+  document.getElementById("players").innerHTML = ST.players.map((p, i) => `
+    <div class="prow ${p.id===PID?'me':''} ${i===ST.turn?'turn':''}">
+      <span class="dot ${p.connected?'':'off'}"></span>
+      <span class="pname">${p.name}</span>
+      <span class="pstat">ד${p.level} · א${p.aura} · ${p.handCount} ביד</span>
+    </div>
+    ${p.table.length ? `<div class="mini">${p.table.map(c =>
+      `<span class="minicard" onclick="openCard('${c.uid}')">${c.art||""} ${c.name.slice(0,16)}</span>`).join("")}</div>` : ""}
+  `).join("");
+
+  document.getElementById("log").innerHTML = ST.log.map(l => `<div>${l.msg}</div>`).join("");
+}
+
+if (PID) {
+  fetch("/state?pid=" + PID).then(r => r.json()).then(s => {
+    if (s.you) {
+      document.getElementById("gate").style.display = "none";
+      document.getElementById("app").style.display = "grid";
+      refresh();
+    }
+  });
+}
+setInterval(() => { if (PID && ST) refresh(); }, 2000);
+</script>
+</body>
+</html>

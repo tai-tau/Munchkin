@@ -1,0 +1,8 @@
+{
+  "name": "munchkin-estraicher",
+  "version": "1.0.0",
+  "description": "סופר מאנצ'קין־אסטרייכר — שרת משחק",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
